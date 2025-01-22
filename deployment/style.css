@@ -1,0 +1,39 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  width: 80%;
+  height: 20%;
+}
+
+.topright {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.ui {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  border: 1px solid black ;
+  border-radius: 10px;
+  margin: 2%;
+  opacity: .4;
+  transition-property: opacity;
+  transition-duration: .3s;
+}
+.ui:hover{
+    opacity: 1;
+}
+
+
+.ui > p {
+  text-align: center;
+}
+input {
+  width: 5vw;
+}

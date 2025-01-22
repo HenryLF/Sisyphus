@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      WebAssembly.instantiateStreaming(
+        fetch("./app.wasm"),
+        go.importObject
+      ).then((result) => {
+        go.run(result.instance);
+      });
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <div id="ui" class="ui topright">
+      <form id="map-params">
+        <a href="https://en.wikipedia.org/wiki/Perlin_noise">Perlin Noise </a
+        >Parameter :<br />
+        Sum Weight : <input type="number" value="3.8" step=".1" name="alpha" /><br />
+        Harmonic spacing : <input type="number" value="1.5" step=".1" name="beta" /><br />
+        Iteration : <input type="number" step="1" value="2" name="nit" /><br />
+        ScaleX : <input type="number" step="10" value="5" name="xscale" /><br />
+        ScaleY : <input type="number" step="10" value="5" name="yscale" /><br />
+        <button id="setmap">SET</button>
+      </form>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="./input.js"></script>
+    <script src="./render.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

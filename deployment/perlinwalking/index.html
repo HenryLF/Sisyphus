@@ -14,10 +14,11 @@
         go.run(result.instance);
       });
     </script>
+    <script src="../joy.js"></script>
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <div id="ui" class="ui settings topright">
+    <div id="ui" class="ui onhoverunfade topleft">
       <form id="map-params">
         <a href="https://en.wikipedia.org/wiki/Perlin_noise">Perlin Noise </a
         >Parameter :<br />
@@ -29,6 +30,7 @@
         <button id="setmap">SET</button>
       </form>
     </div>
+    <div id="joyDiv" class="joystick bottomright"></div>
     <canvas id="canvas"></canvas>
     <script src="./input.js"></script>
     <script src="./render.js"></script>

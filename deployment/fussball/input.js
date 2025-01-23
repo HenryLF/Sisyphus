@@ -3,7 +3,9 @@ const userInput = {
   Down: false,
   Left: false,
   Right: false,
+  Hit: false,
 };
+window.userInput = userInput;
 
 window.addEventListener("keydown", (e) => {
   switch (e.key) {
@@ -23,6 +25,10 @@ window.addEventListener("keydown", (e) => {
       e.preventDefault();
       userInput.Right = true;
       break;
+    case " ":
+      e.preventDefault();
+      userInput.Hit = true;
+      break;
   }
 });
 window.addEventListener("keyup", (e) => {
@@ -39,8 +45,26 @@ window.addEventListener("keyup", (e) => {
     case "ArrowRight":
       userInput.Right = false;
       break;
+    case " ":
+      e.preventDefault();
+      userInput.Hit = false;
+      break;
   }
 });
+
+const hitButton = document.getElementById("hit-button");
+hitButton.ontouchstart = (e) => {
+  e.preventDefault();
+  userInput.Hit = true;
+};
+hitButton.ontouchend = (e) => {
+  e.preventDefault();
+  userInput.Hit = false;
+};
+hitButton.ontouchcancel = (e) => {
+  e.preventDefault();
+  userInput.Hit = false;
+};
 
 var joy = new JoyStick("joyDiv", {}, (dt) => {
   x = parseInt(dt.x);

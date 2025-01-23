@@ -5,37 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="../wasm_exec.js"></script>
+    <script src="../joy.js"></script>
     <script>
-      const go = new Go();
+      go = new Go();
       WebAssembly.instantiateStreaming(
         fetch("./app.wasm"),
         go.importObject
       ).then((result) => {
         go.run(result.instance);
       });
-      </script>
-      <script src="../joy.js"></script>
+    </script>
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
-    <div class="ui compass topleft">
-      <img src="../assets/Arrow.png" id="compass" />
-    </div>
-    <div class="ui topright">
-      <p>
-        Boulder pushed by : <span id="boulder-x"></span><br />
-        Boulder altitude : <span id="boulder-y"></span><br />
-        Boulder size : <span id="boulder-r"></span><br />
-        SuperJump : <span id="superjump"></span><br />
-      </p>
-    </div>
+    <canvas id="canvas"></canvas>
     <div id="joyDiv" class="joystick bottomright"></div>
     <div class="button bottomleft">
-      <img src="../assets/button.svg" id="jump-button" alt="">
+      <img src="../assets/button.svg" id="hit-button" alt="">
     </div>
-    <canvas id="canvas"></canvas>
-    <script src="render.js"></script>
     <script src="input.js"></script>
+    <script src="render.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

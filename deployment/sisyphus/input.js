@@ -52,39 +52,41 @@ window.addEventListener("keyup", (e) => {
   }
 });
 
-const jumpButton = document.getElementById("jump-button")
-jumpButton.ontouchstart = ()=>{
-  userInput.Jump = true
-}
-jumpButton.ontouchend = ()=>{
-  userInput.Jump = false
-}
-jumpButton.ontouchcancel = ()=>{
-  userInput.Jump = false
-}
+const jumpButton = document.getElementById("jump-button");
+jumpButton.ontouchstart = (e) => {
+  e.preventDefault();
+  userInput.Jump = true;
+};
+jumpButton.ontouchend = (e) => {
+  e.preventDefault();
+  userInput.Jump = false;
+};
+jumpButton.ontouchcancel = (e) => {
+  e.preventDefault();
+  userInput.Jump = false;
+};
 
-
-var joy = new JoyStick('joyDiv',{},(dt)=>{
-  x = parseInt(dt.x)
-  y = parseInt(dt.y)
-  if (x>50){
-    userInput.Right = true
-  }else{
-    userInput.Right = false
+var joy = new JoyStick("joyDiv", {}, (dt) => {
+  x = parseInt(dt.x);
+  y = parseInt(dt.y);
+  if (x > 50) {
+    userInput.Right = true;
+  } else {
+    userInput.Right = false;
   }
-  if (x<-50){
-    userInput.Left = true
-  }else{
-    userInput.Left = false
+  if (x < -50) {
+    userInput.Left = true;
+  } else {
+    userInput.Left = false;
   }
-  if (y>50){
-    userInput.Up = true
-  }else{
-    userInput.Up = false
+  if (y > 50) {
+    userInput.Up = true;
+  } else {
+    userInput.Up = false;
   }
-  if (y<-50){
-    userInput.Down = true
-  }else{
-    userInput.Down = false
+  if (y < -50) {
+    userInput.Down = true;
+  } else {
+    userInput.Down = false;
   }
 });

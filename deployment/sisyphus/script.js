@@ -23,8 +23,10 @@ let raf;
 function loop() {
   G = GetUpdate();
   ctx.clearRect(0, 0, cvs.width, cvs.height);
-  drawFloor(G.Floor)
-  Ball.render(G.Boulder)
-  drawPlayer(G.Sisyphus,raf)
+  drawBackground(G.X, G.Y);
+  drawFloor(G.Floor, G.X, G.Y);
+  Boulder.render(G.Boulder, raf);
+  drawPlayer(G.Sisyphus, raf);
+  updateUI(G);
   raf = requestAnimationFrame(loop);
 }

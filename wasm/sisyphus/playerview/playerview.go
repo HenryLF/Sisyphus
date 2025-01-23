@@ -36,7 +36,7 @@ func ClampAbs(x float64, c float64) float64 {
 
 func (P *PlayerView) SlowCenter(c complex128) {
 	P.X += ClampAbs(math.Pow((real(c)-P.X-float64(P.Width)/P.ScaleX/2)*5e-1, 3), 1)
-	P.Y += ClampAbs(math.Pow((imag(c)-P.Y-float64(P.Height)/P.ScaleY/2)*5e-1, 3), 1)
+	P.Y += ClampAbs(math.Pow((imag(c)-P.Y-float64(P.Height)*3/P.ScaleY/4)*5e-1, 3), 1)
 }
 func (P *PlayerView) Set(w, h int) {
 	P.Width = w

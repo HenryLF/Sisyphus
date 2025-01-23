@@ -17,7 +17,23 @@
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
+    <div class="ui compass topleft">
+      <img src="../assets/Arrow.png" id="compass" />
+    </div>
+    <div class="ui topright">
+      <p>
+        Boulder pushed by : <span id="boulder-x"></span><br />
+        Boulder altitude : <span id="boulder-y"></span><br />
+        Boulder size : <span id="boulder-r"></span><br />
+        SuperJump : <span id="superjump"></span><br />
+      </p>
+    </div>
+    <div id="joyDiv" class="joystick bottomright"></div>
+    <div class="button bottomleft">
+      <img src="../assets/button.svg" id="jump-button" alt="">
+    </div>
     <canvas id="canvas"></canvas>
+    <script src="joy.js"></script>
     <script src="render.js"></script>
     <script src="input.js"></script>
     <script src="script.js"></script>

@@ -31,12 +31,17 @@ func (W WorldMap) FloorMap(P playerview.PlayerView) map[string]interface{} {
 
 var Perlin = perlin.NewPerlin(3.8, 1.5, 2, rand.Int64())
 
-const a float64 = 20
-const b float64 = 1
-const c float64 = 5
+const a float64 = 1e3
+const b float64 = 2
+const c float64 = 1e3
+const d float64 = 1e2
+const e float64 = 1e1
 
 func Generator(x float64) float64 {
-	return -math.Pow(1+1/a, x/b) + Perlin.Noise1D(x)/c
+	if x < 0 {
+		return 0
+	}
+	return -math.Sin(math.Pow(x, 1+1/a)/b)*math.Pow(1+1/c, x) + Perlin.Noise1D(x)*math.Pow(1+1/d, x)/e
 }
 
 var Map = WorldMap{

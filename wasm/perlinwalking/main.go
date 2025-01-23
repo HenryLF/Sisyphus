@@ -59,7 +59,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 		Down:  n[2].Bool(),
 		Right: n[3].Bool(),
 	}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 15; i++ {
 		Colision := physic.ColidingObjectMap(physic.ObjectS)
 		for k, obj := range physic.ObjectS {
 			if k == 0 {

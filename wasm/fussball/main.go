@@ -45,7 +45,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 	Input := ParseUserInput()
 	st := physic.Ball.C
 
-	for range 10 {
+	for range 15 {
 		Colide := physic.ColidingObjectMap(physic.ObjectS)
 		for k, obj := range physic.ObjectS {
 			if k == 0 {

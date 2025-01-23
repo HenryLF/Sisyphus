@@ -20,7 +20,7 @@ function loop() {
   ctx.clearRect(0,0,cvs.width,cvs.height);
   drawBackground()
   drawFloor()
-  Net.render(gameState.Net)
+  // Net.render(gameState.Net)
   Ball.render(gameState.Ball,raf)
   drawPlayer(gameState.PlayerA,raf)
   drawPlayer(gameState.PlayerB,raf)

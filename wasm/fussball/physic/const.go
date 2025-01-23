@@ -71,4 +71,4 @@ var Net = Object{
 	Meta:          make(map[string]interface{}),
 }
 
-var ObjectS = []*Object{&PlayerA, &PlayerB, &Ball, &Net}
+var ObjectS = []*Object{&PlayerA, &PlayerB, &Ball}

@@ -37,7 +37,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 		Left:  Input.Get("Left").Bool(),
 		Down:  Input.Get("Down").Bool(),
 		Right: Input.Get("Right").Bool(),
-		Jump:  Input.Get("Jump").Bool(),
+		Hit:   Input.Get("Act").Bool(),
 	}
 	BoulderP := physic.Boulder.C
 	for i := 0; i < 15; i++ {
@@ -49,6 +49,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 	RotateSisyphus()
 	RotateBoulder(BoulderP)
 	ScaleBoulder()
+
 	return js.ValueOf(map[string]interface{}{
 		"X":        playerview.P.X * playerview.P.ScaleX,
 		"Y":        playerview.P.Y * playerview.P.ScaleY,
@@ -56,6 +57,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 		"Boulder":  ObjectToJS(physic.Boulder),
 		"Floor":    worldmap.Map.FloorMap(playerview.P),
 		"Compass":  CompasDirection(physic.Sisyphus, physic.Boulder),
+		"Hades":    ObjectToJS(physic.Hades),
 	})
 }
 
@@ -100,27 +102,44 @@ func ObjectToJS(A physic.Object) js.Value {
 	out["Y"] = y
 	out["D"] = objectDir(A)
 	out["A"] = A.A
-	out["R"] = A.R * playerview.P.ScaleX
+	out["R"] = A.R * playerview.P.ScaleY
 	A.UpdateMeta(playerview.P.ScaleX, playerview.P.ScaleY)
 	out["Meta"] = A.Meta
 	return js.ValueOf(out)
 }
 
 func objectDir(A physic.Object) string {
-	x := real(A.S)
-	y := imag(A.S)
-	switch {
-	case A.Meta["jump"]:
-		return "J"
-	case x > DirThresh:
-		return "R"
-	case x < -DirThresh:
-		return "L"
-	case y < -DirThreshV:
-		return "U"
-	case y > DirThreshV && !A.IsGrounded(worldmap.Map.Generator):
-		return "D"
-	default:
-		return "I"
+	x, y := physic.Unwrap(A.S)
+	if A.Hit {
+		if x < -DirThresh {
+			return "HL"
+		}
+		return "HR"
 	}
+	if A.IsGrounded(worldmap.Map.Generator) {
+		if x > DirThresh {
+			return "R"
+		}
+		if x < -DirThresh {
+			return "L"
+		}
+	} else {
+		if y > DirThreshV {
+			if x < 0 {
+				return "UL"
+			} else {
+
+				return "UR"
+			}
+		}
+		if y < -DirThreshV {
+
+			if x < 0 {
+				return "DL"
+			} else {
+				return "DR"
+			}
+		}
+	}
+	return "I"
 }

@@ -14,7 +14,7 @@
         go.run(result.instance);
       });
       </script>
-      <script src="../joy.js"></script>
+      <script src="../scripts/joy.js"></script>
     <link rel="stylesheet" href="../style.css" />
   </head>
   <body>
@@ -26,16 +26,15 @@
         Boulder pushed by : <span id="boulder-x"></span><br />
         Boulder altitude : <span id="boulder-y"></span><br />
         Boulder size : <span id="boulder-r"></span><br />
-        SuperJump : <span id="superjump"></span><br />
       </p>
     </div>
     <div id="joyDiv" class="joystick bottomright"></div>
     <div class="button bottomleft">
-      <img src="../assets/button.svg" id="jump-button" alt="">
+      <img src="../assets/button.svg" id="hit-button" alt="">
     </div>
     <canvas id="canvas"></canvas>
     <script src="render.js"></script>
-    <script src="input.js"></script>
+    <script src="../scripts/input.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -3,7 +3,7 @@ const userInput = {
   Down: false,
   Left: false,
   Right: false,
-  Jump: false,
+  Hit: false,
 };
 window.userInput = userInput;
 
@@ -27,7 +27,7 @@ window.addEventListener("keydown", (e) => {
       break;
     case " ":
       e.preventDefault();
-      userInput.Jump = true;
+      userInput.Hit = true;
       break;
   }
 });
@@ -47,23 +47,30 @@ window.addEventListener("keyup", (e) => {
       break;
     case " ":
       e.preventDefault();
-      userInput.Jump = false;
+      userInput.Hit = false;
       break;
   }
 });
 
-const jumpButton = document.getElementById("jump-button");
-jumpButton.ontouchstart = (e) => {
+const hitButton = document.getElementById("hit-button");
+hitButton.onmousedown = (e) => {
   e.preventDefault();
-  userInput.Jump = true;
+  userInput.Hit = true;
 };
-jumpButton.ontouchend = (e) => {
-  e.preventDefault();
-  userInput.Jump = false;
+hitButton.onmouseup = (e) => {
+  userInput.Hit = false;
 };
-jumpButton.ontouchcancel = (e) => {
+hitButton.ontouchstart = (e) => {
   e.preventDefault();
-  userInput.Jump = false;
+  userInput.Hit = true;
+};
+hitButton.ontouchend = (e) => {
+  e.preventDefault();
+  userInput.Hit = false;
+};
+hitButton.ontouchcancel = (e) => {
+  e.preventDefault();
+  userInput.Hit = false;
 };
 
 var joy = new JoyStick("joyDiv", {}, (dt) => {

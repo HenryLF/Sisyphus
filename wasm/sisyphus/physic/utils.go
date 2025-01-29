@@ -39,6 +39,9 @@ func FloorDistance(s, e complex128, Floor func(float64) float64) float64 {
 	x1 := math.Min(real(s), real(e))
 	x2 := math.Max(real(e), real(s))
 	v := 0.0
+	if x2-x1 < Dx {
+		return v
+	}
 	for x := x1; x < x2-Dx; x += Dx {
 		v1 := complex(x, Floor(x))
 		v2 := complex(x+Dx, Floor(x+Dx))
@@ -201,38 +204,4 @@ func OverlapRectRect(A, B Rect) float64 {
 		OverlapH = math.Min(OverlapH, math.Abs(h))
 	}
 	return (W/2 - OverlapW) * (H/2 - OverlapH) / math.Pow(Dist(A.C, B.C), 2)
-}
-
-func OutFloor(A Shape, Floor func(float64) float64) complex128 {
-	_, cA := A.(Circle)
-	switch {
-	case cA:
-		a := A.(Circle)
-		return CircleOutFloor(a, Floor)
-	default:
-		a := A.(Rect)
-		return RectOutFloor(a, Floor)
-	}
-}
-
-func CircleOutFloor(C Circle, Floor func(float64) float64) complex128 {
-	x, y := Unwrap(C.C)
-	return complex(0, Floor(x)-y-C.R)
-}
-
-func RectOutFloor(R Rect, Floor func(float64) float64) complex128 {
-	x, yC := Unwrap(R.C)
-	bot := MaxN(R.Corner(), func(a, b complex128) int { return int(1000 * (imag(a) - imag(b))) }, 2)
-	_, angle := cmplx.Polar(bot[0] - bot[1])
-	y := math.Tan(angle) * (real(bot[1]) - x)
-	return complex(0, Floor(x)-yC-y)
-}
-
-func MaxN[T comparable](S []T, fun func(a, b T) int, N int) []T {
-	m := []T{}
-	for range N {
-		m = append(m, slices.MaxFunc(S, fun))
-		S = slices.DeleteFunc(S, func(a T) bool { return a == m[len(m)-1] })
-	}
-	return m
 }

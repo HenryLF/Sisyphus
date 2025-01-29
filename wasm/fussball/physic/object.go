@@ -12,7 +12,7 @@ type Object struct {
 	R             float64
 	M             float64
 	A             float64
-	Hit           float64
+	Hit           bool
 	FloorFriction float64
 	AirFriction   float64
 	FloorReaction float64
@@ -22,12 +22,18 @@ type Object struct {
 }
 
 func CircleHitbox(A Object) Shape {
+	if A.Hit {
+		return Circle{A.C, A.R * 3}
+	}
 	return Circle{A.C, A.R}
 }
 func RectHitbox(aspectW_H float64) func(A Object) Shape {
 	return func(A Object) Shape {
 		w := CmplxMul(1, A.R*aspectW_H) * cmplx.Rect(1, A.A)
 		h := CmplxMul(0-1i, A.R) * cmplx.Rect(1, A.A)
+		if A.Hit {
+			return Rect{A.C, w * 3, h}
+		}
 		return Rect{A.C, w, h}
 	}
 }
@@ -66,15 +72,24 @@ func (A *Object) Rotate(c float64) {
 
 func (A *Object) PFD(Input UserInput, Floor func(float64) float64, Colider []Object, delay float64) {
 	//Calculate new Acceleration
+
 	grounded := A.IsGrounded(Floor)
 	floorAngle := VectOf(Floor, real(A.C))
 	F := Gravity(A.M)
 	F += FloorReaction(F, floorAngle, grounded, *A)
+	if A.IsBellow(Floor) {
+		F += complex(0, -FloorElasticity*(imag(A.C)+A.R-Floor(real(A.C)))/delay)
+	}
 	F += Fricton(*A, grounded)
 	for _, obj := range Colider {
 		F += ColisionForce(*A, obj)
 	}
-	F += Movement(Input, grounded, floorAngle, *A)
+	if Input.Hit {
+		A.Hit = true
+	} else {
+		A.Hit = false
+		F += Movement(Input, grounded, floorAngle, A)
+	}
 	F = CmplxMul(F, 1/A.M)
 	//Calculate new speed
 	A.S += CmplxMul(F, delay)
@@ -85,10 +100,10 @@ func (A *Object) PFD(Input UserInput, Floor func(float64) float64, Colider []Obj
 		A.C = nC
 	}
 	//Push object if bellow ground
-	if A.IsBellow(Floor) {
-		A.C = complex(real(A.C), Floor(real(A.C))-A.R)
-		A.S = complex(real(A.S), math.Max(imag(A.S), 0))
-	}
+	// if A.IsBellow(Floor) {
+	// 	A.C = complex(real(A.C), Floor(real(A.C))-A.R*(A.Hit+1))
+	// 	A.S = complex(real(A.S), math.Min(imag(A.S), 0))
+	// }
 
 }
 
@@ -100,8 +115,9 @@ type UserInput struct {
 	Up, Left, Down, Right, Hit bool
 }
 
-func Movement(Input UserInput, grounded bool, floorAngle complex128, A Object) complex128 {
+func Movement(Input UserInput, grounded bool, floorAngle complex128, A *Object) complex128 {
 	F := complex(0, 0)
+
 	if _, a := cmplx.Polar(floorAngle); math.Abs(a) < 1.05 && grounded {
 		if Input.Left {
 			F -= CmplxMul(floorAngle, MovementAcc)

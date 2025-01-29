@@ -1,6 +1,7 @@
 package physic
 
 import (
+	"maps"
 	"math"
 	"math/cmplx"
 )
@@ -11,51 +12,56 @@ type Object struct {
 	R             float64
 	M             float64
 	A             float64
-	Jump          float64
+	Hit           bool
 	FloorFriction float64
 	AirFriction   float64
 	FloorReaction float64
 	Hitbox        func(Object) Shape
+	Bounds        func(complex128) bool
 	Meta          map[string]interface{}
 }
 
-var Sisyphus = Object{
-	C:             1,
-	R:             1.0 / 20.0,
-	M:             1,
-	Hitbox:        SisyphusHitbox,
-	FloorFriction: 2,
-	AirFriction:   1.5,
-	FloorReaction: 0.05,
-	Meta:          make(map[string]interface{}),
-}
-var Boulder = Object{
-	C:             1.2,
-	R:             1.0 / 5.0,
-	M:             .3,
-	A:             0,
-	Hitbox:        BoulderHitbox,
-	FloorFriction: 0.8,
-	FloorReaction: 1.5,
-	AirFriction:   0.5,
-	Meta:          make(map[string]interface{}),
-}
-var ObjectS = []*Object{&Sisyphus, &Boulder}
-
-func BoulderHitbox(A Object) Shape {
+func CircleHitbox(A Object) Shape {
+	if A.Hit {
+		return Circle{A.C, A.R * HitRadius}
+	}
 	return Circle{A.C, A.R}
 }
+func NoHitbox(A Object) Shape {
+	return Circle{A.C, 0}
+}
 
-func SisyphusHitbox(A Object) Shape {
-	w := CmplxMul(1, A.R) * cmplx.Rect(1, A.A)
-	h := CmplxMul(0-1i, A.R) * cmplx.Rect(1, A.A)
-	return Rect{A.C, w, h}
+func RectHitbox(aspectW_H float64) func(A Object) Shape {
+	return func(A Object) Shape {
+		w := CmplxMul(1, A.R*aspectW_H) * cmplx.Rect(1, A.A)
+		h := CmplxMul(0-1i, A.R) * cmplx.Rect(1, A.A)
+		if A.Hit {
+			return Rect{A.C, w * HitRadius, h}
+		}
+		return Rect{A.C, w, h}
+	}
+}
+
+func InBounds(Xm, Ym, XM, YM float64) func(complex128) bool {
+	return func(c complex128) bool {
+		x, y := Unwrap(c)
+		return x > Xm && x < XM && y > Ym && y < YM
+	}
+}
+func NoBounds(c complex128) bool {
+	return true
+}
+
+func (A Object) Copy() Object {
+	cp := A
+	cp.Meta = maps.Clone(A.Meta)
+	return cp
 }
 
 func (A *Object) UpdateMeta(sx, sy float64) {
 	A.Meta["X"] = real(A.C) * sx
 	A.Meta["Y"] = imag(A.C) * sy
-	A.Meta["Jump"] = A.Jump
+	A.Meta["Hit"] = A.Hit
 }
 
 func (A Object) IsGrounded(Floor func(float64) float64) bool {
@@ -70,28 +76,43 @@ func (A *Object) Rotate(c float64) {
 
 func (A *Object) PFD(Input UserInput, Floor func(float64) float64, Colider []Object, delay float64) {
 	//Calculate new Acceleration
+
 	grounded := A.IsGrounded(Floor)
 	floorAngle := VectOf(Floor, real(A.C))
 	F := Gravity(A.M)
 	F += FloorReaction(F, floorAngle, grounded, *A)
+	if A.IsBellow(Floor) {
+		F += complex(0, -math.Pow(FloorElasticity*(imag(A.C)+A.R-Floor(real(A.C)))/delay, 4))
+	}
 	F += Fricton(*A, grounded)
 	for _, obj := range Colider {
 		F += ColisionForce(*A, obj)
 	}
-	F += Movement(Input, grounded, floorAngle, *A)
+	if Input.Hit {
+		A.Hit = true
+	} else {
+		A.Hit = false
+		F += Movement(Input, grounded, floorAngle, A)
+	}
 	F = CmplxMul(F, 1/A.M)
 	//Calculate new speed
 	A.S += CmplxMul(F, delay)
 
-	//Handle Colision
-
 	A.S += Jump(grounded, floorAngle, Input, A)
-	//Calculate new coord
-	A.C += CmplxMul(A.S, delay)
-	if A.IsBellow(Floor) {
-		A.C = complex(real(A.C), Floor(real(A.C))-A.R)
-		A.S = complex(real(A.S), math.Max(imag(A.S), 0))
+	//Calculate new coord apply in still in Bounds
+	if nC := A.C + CmplxMul(A.S, delay); A.Bounds(nC) {
+		A.C = nC
+	} else {
+		A.C = complex(-2.8, Floor(-2)-A.R)
+
+		A.S = 0
 	}
+	//Push object if bellow ground
+	// if A.IsBellow(Floor) {
+	// 	A.C = complex(real(A.C), Floor(real(A.C))-A.R*(A.Hit+1))
+	// 	A.S = complex(real(A.S), math.Min(imag(A.S), 0))
+	// }
+
 }
 
 func Gravity(m float64) complex128 {
@@ -99,11 +120,12 @@ func Gravity(m float64) complex128 {
 }
 
 type UserInput struct {
-	Up, Left, Down, Right, Jump bool
+	Up, Left, Down, Right, Hit bool
 }
 
-func Movement(Input UserInput, grounded bool, floorAngle complex128, A Object) complex128 {
+func Movement(Input UserInput, grounded bool, floorAngle complex128, A *Object) complex128 {
 	F := complex(0, 0)
+
 	if _, a := cmplx.Polar(floorAngle); math.Abs(a) < 1.05 && grounded {
 		if Input.Left {
 			F -= CmplxMul(floorAngle, MovementAcc)
@@ -125,16 +147,8 @@ func Movement(Input UserInput, grounded bool, floorAngle complex128, A Object) c
 }
 
 func Jump(grounded bool, floorAngle complex128, Input UserInput, A *Object) complex128 {
-	if Input.Jump {
-		A.Jump = min(A.Jump+IncrementSuperJump, MaxSuperJump)
-		A.Meta["jump"] = true
-	} else {
-		A.Meta["jump"] = false
-	}
 	if _, a := cmplx.Polar(floorAngle); Input.Up && grounded && math.Abs(a) < 1.05 {
-		J := A.Jump
-		A.Jump = 0
-		return complex(0, -JumpV*(J+1))
+		return complex(0, -JumpV)
 	}
 	return 0
 

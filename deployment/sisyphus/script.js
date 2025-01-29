@@ -26,6 +26,7 @@ function loop() {
   drawBackground(G.X, G.Y);
   drawFloor(G.Floor, G.X, G.Y);
   Boulder.render(G.Boulder, raf);
+  Hades.render(G.Hades,raf)
   drawPlayer(G.Sisyphus, raf);
   updateUI(G);
   raf = requestAnimationFrame(loop);

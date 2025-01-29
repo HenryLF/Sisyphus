@@ -61,8 +61,8 @@ class Entity {
       0,
       this.spriteWidth,
       this.spriteSheet.height,
-      -w / 2,
-      -h / 2,
+      (-w * this.scale) / 2,
+      (-h * this.scale) / 2,
       w * this.scale,
       h * this.scale
     );
@@ -90,6 +90,20 @@ PlayerRight.spriteWidth = 20;
 PlayerRight.maxN = 6;
 PlayerRight.spriteSheet.src = "../assets/PlayerRight.png";
 
+const PlayerHitLeft = new Entity();
+PlayerHitLeft.spriteWidth = 32;
+PlayerHitLeft.scale = 2;
+PlayerHitLeft.delayN = 5;
+PlayerHitLeft.maxN = 7;
+PlayerHitLeft.spriteSheet.src = "../assets/PlayerHitLeft.png";
+
+const PlayerHitRight = new Entity();
+PlayerHitRight.spriteWidth = 32;
+PlayerHitRight.scale = 2;
+PlayerHitRight.delayN = 5;
+PlayerHitRight.maxN = 7;
+PlayerHitRight.spriteSheet.src = "../assets/PlayerHitRight.png";
+
 const PlayerUp = new Entity();
 PlayerUp.spriteWidth = 19;
 PlayerUp.maxN = 3;
@@ -111,8 +125,6 @@ Ball.maxN = 7;
 Ball.spriteWidth = 250;
 Ball.spriteSheet.src = "../assets/Boulder.png";
 
-
-
 function drawPlayer(obj, n) {
   switch (obj.D) {
     case "R":
@@ -121,8 +133,14 @@ function drawPlayer(obj, n) {
     case "L":
       PlayerLeft.render(obj, n);
       break;
-    case "U":
-      PlayerUp.render(obj, n);
+    case "R":
+      PlayerRight.render(obj, n);
+      break;
+    case "HL":
+      PlayerHitLeft.render(obj, n);
+      break;
+    case "HR":
+      PlayerHitRight.render(obj, n);
       break;
     case "D":
       PlayerDown.render(obj, n);
@@ -135,8 +153,6 @@ function drawPlayer(obj, n) {
   }
 }
 
-
-
 let backTexture = new Image();
 backTexture.src = "../assets/BackTexture.jpg";
 
@@ -147,7 +163,7 @@ function drawBackground(dx, dy) {
   ctx.fillStyle = "#f5f17f";
   ctx.fillRect(0, 0, cvs.width, cvs.height);
   let rect = ctx.rect(0, 0, cvs.width, backTexture.height);
-  
+
   ctx.translate(-dx, 0);
   let backPattern = ctx.createPattern(backTexture, "repeat-x");
   ctx.fillStyle = backPattern;
@@ -155,8 +171,6 @@ function drawBackground(dx, dy) {
   ctx.restore();
   ctx.resetTransform();
 }
-
-
 
 let floorTexture = new Image();
 floorTexture.src = "../assets/GrassTexture.png";
@@ -181,8 +195,6 @@ function drawFloor(dx, dy) {
   ctx.resetTransform();
 }
 
-
-
 let netTexture = new Image();
 netTexture.src = "../assets/NetTexture.png";
 const Net = {
@@ -193,7 +205,7 @@ const Net = {
     ctx.fillRect(
       obj.X - 0.02 * obj.R,
       obj.Y - obj.R,
-      0.2* 2 * obj.R,
+      0.2 * 2 * obj.R,
       obj.R * 2
     );
     ctx.restore();

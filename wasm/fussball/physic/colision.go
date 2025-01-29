@@ -8,7 +8,7 @@ type ColisionMap = map[int][]Object
 
 func ColisionForce(A, B Object) complex128 {
 	ax, _ := Normalize((A.C - B.C))
-	E := math.Pow(Overlap(A.Hitbox(A), B.Hitbox(B))*CollisionTransfert*(B.M+A.M)/(A.M), 4)
+	E := math.Pow(Overlap(A.Hitbox(A), B.Hitbox(B))*ColisionTransfert*(B.M+A.M)/(A.M), 4)
 	out := CmplxMul(ax, E)
 
 	if E > CapImpulse {

@@ -10,7 +10,12 @@ const JumpV = 3
 const AirFriction = 1
 const FloorFriction = .8
 
-const CollisionTransfert = 100
+const HitIncrement = 1e-3
+const MaxHit = 2
+const HitSlowness = 1.5
+
+const ColisionTransfert = 100
+const FloorElasticity = 50
 const CapImpulse = 800
 
 const HitRadius = 1e-3
@@ -21,7 +26,7 @@ var Dx = 1e-4
 var Rouding = math.Pow(10, 5)
 
 var PlayerA = Object{
-	C:             -1,
+	C:             complex(-1, -1./20),
 	R:             1.0 / 20.0,
 	M:             1,
 	A:             0,
@@ -33,7 +38,7 @@ var PlayerA = Object{
 	Meta:          make(map[string]interface{}),
 }
 var PlayerB = Object{
-	C:             1,
+	C:             complex(1, -1./20),
 	R:             1.0 / 20.0,
 	M:             1,
 	A:             0,

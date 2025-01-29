@@ -64,84 +64,96 @@ class EntityReverse extends Entity {
 }
 class EntityCaped extends Entity {
   render(obj, N) {
-    N = Math.min(N, (this.maxN - 1)*this.delayN);
+    N = Math.min(N, (this.maxN - 1) * this.delayN);
     super.render(obj, N);
   }
 }
 
 class EntityCapedMiror extends EntityMiror {
   render(obj, N) {
-    N = Math.min(N, (this.maxN - 1)*this.delayN);
+    N = Math.min(N, (this.maxN - 1) * this.delayN);
     super.render(obj, N);
   }
 }
 class EntityCapedReverse extends EntityReverse {
   render(obj, N) {
-    N = Math.min(N, (this.maxN - 1)*this.delayN);
+    N = Math.min(N, (this.maxN - 1) * this.delayN);
     super.render(obj, N);
   }
 }
 class EntityCapedReverseMiror extends EntityMiror {
   render(obj, N) {
-    N = Math.min(N, (this.maxN - 1)*this.delayN);
+    N = Math.min(N, (this.maxN - 1) * this.delayN);
     N = this.maxN - (N % this.maxN);
     super.render(obj, N);
   }
 }
 
+const PlayerIdle_img = new Image();
+PlayerIdle_img.src = "../assets/PlayerIdle.png";
+
 const PlayerIdle = new Entity();
 PlayerIdle.spriteWidth = 40;
 PlayerIdle.maxN = 7;
-PlayerIdle.spriteSheet.src = "../assets/PlayerIdle.png";
+PlayerIdle.spriteSheet = PlayerIdle_img;
 
-const PlayerLeft = new EntityMiror();
-PlayerLeft.spriteWidth = 50;
-PlayerLeft.maxN = 6;
-PlayerLeft.scale = 1.25;
-PlayerLeft.spriteSheet.src = "../assets/PlayerRight.png";
+const PlayerRight_img = new Image();
+PlayerRight_img.src = "../assets/PlayerRight.png";
 
 const PlayerRight = new Entity();
 PlayerRight.spriteWidth = 50;
 PlayerRight.scale = 1.25;
 PlayerRight.maxN = 6;
-PlayerRight.spriteSheet.src = "../assets/PlayerRight.png";
+PlayerRight.spriteSheet = PlayerRight_img;
+
+const PlayerLeft = new EntityMiror();
+PlayerLeft.spriteWidth = 50;
+PlayerLeft.maxN = 6;
+PlayerLeft.scale = 1.25;
+PlayerLeft.spriteSheet = PlayerRight_img;
+
+const PlayerHit_img = new Image();
+PlayerHit_img.src = "../assets/PlayerHit.png";
 
 const PlayerHit = new EntityCaped();
 PlayerHit.spriteWidth = 62;
 PlayerHit.scale = 1.5;
 PlayerHit.maxN = 4;
-PlayerHit.spriteSheet.src = "../assets/PlayerHit.png";
+PlayerHit.spriteSheet = PlayerHit_img;
 
 const PlayerHitLeft = new EntityCapedMiror();
 PlayerHitLeft.spriteWidth = 62;
 PlayerHitLeft.scale = 1.5;
 PlayerHitLeft.maxN = 4;
-PlayerHitLeft.spriteSheet.src = "../assets/PlayerHit.png";
+PlayerHitLeft.spriteSheet = PlayerHit_img;
+
+const PlayerUp_img = new Image();
+PlayerUp_img.src = "../assets/PlayerUp.png";
 
 const PlayerUp = new EntityCaped();
 PlayerUp.spriteWidth = 50;
 PlayerUp.maxN = 7;
 PlayerUp.delayN = 5;
 PlayerUp.scale = 1.25;
-PlayerUp.spriteSheet.src = "../assets/PlayerUp.png";
+PlayerUp.spriteSheet = PlayerUp_img;
 
 const PlayerUpLeft = new EntityCapedMiror();
 PlayerUpLeft.spriteWidth = 50;
 PlayerUpLeft.maxN = 7;
 PlayerUpLeft.scale = 1.25;
-PlayerUpLeft.spriteSheet.src = "../assets/PlayerUp.png";
+PlayerUpLeft.spriteSheet = PlayerUp_img;
 
 const PlayerDown = new EntityCapedReverse();
 PlayerDown.spriteWidth = 50;
 PlayerDown.scale = 1.25;
 PlayerDown.maxN = 7;
-PlayerDown.spriteSheet.src = "../assets/PlayerUp.png";
+PlayerDown.spriteSheet = PlayerUp_img;
 
 const PlayerDownLeft = new EntityCapedReverseMiror();
 PlayerDownLeft.spriteWidth = 50;
 PlayerDownLeft.scale = 1.25;
 PlayerDownLeft.maxN = 7;
-PlayerDownLeft.spriteSheet.src = "../assets/PlayerUp.png";
+PlayerDownLeft.spriteSheet = PlayerUp_img;
 
 const Boulder = new Entity();
 Boulder.maxN = 7;
@@ -155,7 +167,6 @@ Hades.spriteWidth = 50;
 Hades.spriteSheet.src = "../assets/Hades.png";
 
 function drawPlayer(obj, n) {
-  console.log(obj.D);
   switch (obj.D) {
     case "R":
       PlayerRight.render(obj, n);

@@ -37,7 +37,7 @@ func GetUpdate(this js.Value, n []js.Value) any {
 		Left:  Input.Get("Left").Bool(),
 		Down:  Input.Get("Down").Bool(),
 		Right: Input.Get("Right").Bool(),
-		Hit:   Input.Get("Act").Bool(),
+		Hit:   Input.Get("Hit").Bool(),
 	}
 	BoulderP := physic.Boulder.C
 	for i := 0; i < 15; i++ {
@@ -66,7 +66,7 @@ func RotateSisyphus() {
 		v := physic.VectOf(worldmap.Generator, real(physic.Sisyphus.C))
 		physic.Sisyphus.A = math.Atan(imag(v) / real(v))
 	} else {
-		physic.Sisyphus.A -= physic.Sisyphus.A * dA
+		physic.Sisyphus.A -= physic.Sisyphus.A * DA
 	}
 }
 
@@ -116,29 +116,27 @@ func objectDir(A physic.Object) string {
 		}
 		return "HR"
 	}
-	if A.IsGrounded(worldmap.Map.Generator) {
+	if !A.IsGrounded(worldmap.Map.Generator) {
+		if y > DirThreshV {
+			if x < -DirThresh {
+				return "UL"
+			} else if x > DirThresh {
+				return "UR"
+			}
+		}
+		if y < -DirThreshV {
+			if x < -DirThresh {
+				return "DL"
+			} else if x > DirThresh {
+				return "DR"
+			}
+		}
+	} else {
 		if x > DirThresh {
 			return "R"
 		}
 		if x < -DirThresh {
 			return "L"
-		}
-	} else {
-		if y > DirThreshV {
-			if x < 0 {
-				return "UL"
-			} else {
-
-				return "UR"
-			}
-		}
-		if y < -DirThreshV {
-
-			if x < 0 {
-				return "DL"
-			} else {
-				return "DR"
-			}
 		}
 	}
 	return "I"

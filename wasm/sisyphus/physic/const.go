@@ -22,6 +22,9 @@ const HitRadius = 3
 const HitNoRecoil = 2
 
 var Dx = 1e-4
+var Eps = 5e-1
+
+var MaxForce = 2e2
 
 var Rouding = math.Pow(10, 5)
 

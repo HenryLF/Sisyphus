@@ -81,9 +81,7 @@ func (A *Object) PFD(Input UserInput, Floor func(float64) float64, Colider []Obj
 	floorAngle := VectOf(Floor, real(A.C))
 	F := Gravity(A.M)
 	F += FloorReaction(F, floorAngle, grounded, *A)
-	if A.IsBellow(Floor) {
-		F += complex(0, -math.Pow(FloorElasticity*(imag(A.C)+A.R-Floor(real(A.C)))/delay, 4))
-	}
+	F += RestingForce(*A, Floor, delay)
 	F += Fricton(*A, grounded)
 	for _, obj := range Colider {
 		F += ColisionForce(*A, obj)
@@ -104,15 +102,20 @@ func (A *Object) PFD(Input UserInput, Floor func(float64) float64, Colider []Obj
 		A.C = nC
 	} else {
 		A.C = complex(-2.8, Floor(-2)-A.R)
-
 		A.S = 0
 	}
-	//Push object if bellow ground
-	// if A.IsBellow(Floor) {
-	// 	A.C = complex(real(A.C), Floor(real(A.C))-A.R*(A.Hit+1))
-	// 	A.S = complex(real(A.S), math.Min(imag(A.S), 0))
-	// }
+}
 
+func RestingForce(A Object, Floor func(float64) float64, delay float64) complex128 {
+	// y := imag(A.S)
+	if A.IsBellow(Floor) {
+		E := math.Pow(FloorElasticity*(imag(A.C)+A.R-Floor(real(A.C)))/delay, 4)
+		if E < Eps {
+			E = 0
+		}
+		return complex(0, -math.Min(E, MaxForce))
+	}
+	return 0
 }
 
 func Gravity(m float64) complex128 {
